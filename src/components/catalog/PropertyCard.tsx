@@ -10,19 +10,20 @@ interface PropertyCardProps {
   property: Property;
 }
 
+const DISTRICT_NAMES: Record<string, { ru: string; en: string }> = {
+  naama_bay: { ru: 'Наама Бей', en: 'Naama Bay' },
+  old_town: { ru: 'Старый Город', en: 'Old Town' },
+  hadaba: { ru: 'Хадаба', en: 'Hadaba' },
+  sharks_bay: { ru: 'Шаркс Бей', en: 'Sharks Bay' },
+  sahl_hasheesh: { ru: 'Сахль Хашиш', en: 'Sahl Hasheesh' },
+  nabq: { ru: 'Набк', en: 'Nabq' },
+};
+
 export const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
   const { lang, favorites, toggleFavorite, comparisonList, toggleComparison, formatPrice } = useApp();
+  const isRu = lang === 'ru';
   const isFav = favorites.includes(property.id);
   const isCompared = comparisonList.includes(property.id);
-
-  const districtNames: Record<string, string> = {
-    naama_bay: 'Наама Бей',
-    old_town: 'Старый Город',
-    hadaba: 'Хадаба',
-    sharks_bay: 'Шаркс Бей',
-    sahl_hasheesh: 'Сахль Хашиш',
-    nabq: 'Набк',
-  };
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -35,6 +36,15 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
     e.stopPropagation();
     toggleComparison(property.id);
   };
+
+  // Локализация типа сделки
+  const getOperationLabel = () => {
+    if (property.operation === 'daily') return isRu ? 'Посуточно' : 'Short-term';
+    if (property.operation === 'sale') return isRu ? 'Продажа' : 'For Sale';
+    return isRu ? 'Аренда' : 'Long-term';
+  };
+
+  const districtLabel = DISTRICT_NAMES[property.district]?.[lang] || property.district.replace('_', ' ');
 
   return (
     <Link
@@ -59,7 +69,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
                 ? 'bg-amber-600/90' 
                 : 'bg-sky-600/90'
             }`}>
-              {property.operation === 'daily' ? 'Посуточно' : property.operation === 'sale' ? 'Продажа' : 'Аренда'}
+              {getOperationLabel()}
             </span>
             {property.isVip && (
               <span className="flex items-center space-x-1 px-3 py-1 rounded-full text-xs font-bold bg-amber-400 text-slate-950 shadow-md">
@@ -69,20 +79,21 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
             )}
           </div>
 
-          {/* Иконка "Избранное" без перехода по ссылке */}
+          {/* Иконка Избранного */}
           <button
             onClick={handleFavoriteClick}
             className={`absolute top-4 right-4 p-2.5 rounded-full backdrop-blur-md transition cursor-pointer z-10 ${
               isFav ? 'bg-rose-500 text-white' : 'bg-slate-900/40 text-white hover:bg-rose-500'
             }`}
-            title="Добавить в избранное"
+            title={isRu ? 'Добавить в избранное' : 'Add to favorites'}
           >
             <Heart className="w-4 h-4 fill-current" />
           </button>
 
+          {/* Район */}
           <div className="absolute bottom-4 left-4 flex items-center space-x-1 text-white/90 text-xs font-medium bg-slate-900/60 backdrop-blur-md px-3 py-1 rounded-lg">
             <MapPin className="w-3.5 h-3.5 text-teal-400" />
-            <span>{districtNames[property.district] || property.district}</span>
+            <span>{districtLabel}</span>
           </div>
         </div>
 
@@ -98,42 +109,52 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
 
           <div className="grid grid-cols-3 gap-2 py-3 border-y border-slate-100 text-slate-600 text-xs font-semibold mb-4">
             <div className="flex items-center space-x-1.5">
-              <Bed className="w-4 h-4 text-teal-600" />
-              <span>{property.details.bedrooms} спальни</span>
+              <Bed className="w-4 h-4 text-teal-600 flex-shrink-0" />
+              <span>{property.details.bedrooms} {isRu ? 'спальни' : 'beds'}</span>
             </div>
             <div className="flex items-center space-x-1.5">
-              <Bath className="w-4 h-4 text-teal-600" />
-              <span>{property.details.bathrooms} ванные</span>
+              <Bath className="w-4 h-4 text-teal-600 flex-shrink-0" />
+              <span>{property.details.bathrooms} {isRu ? 'ванные' : 'baths'}</span>
             </div>
             <div className="flex items-center space-x-1.5">
-              <Maximize className="w-4 h-4 text-teal-600" />
-              <span>{property.details.areaSqM} м²</span>
+              <Maximize className="w-4 h-4 text-teal-600 flex-shrink-0" />
+              <span>{property.details.areaSqM} {isRu ? 'м²' : 'sq.m'}</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Стоимость и кнопка перехода */}
+      {/* Стоимость и кнопка действия */}
       <div className="px-6 pb-6 pt-0">
         <div className="flex items-end justify-between mb-4">
           <div>
-            <span className="text-xs text-slate-400 uppercase tracking-wider block">Стоимость</span>
+            <span className="text-xs text-slate-400 uppercase tracking-wider block">
+              {isRu ? 'Стоимость' : 'Price'}
+            </span>
             <div className="text-2xl font-black text-slate-900">
               {formatPrice(property.price.baseEgp)}
-              {property.operation === 'daily' && <span className="text-xs font-medium text-slate-500"> /ночь</span>}
+              {property.operation === 'daily' && (
+                <span className="text-xs font-medium text-slate-500">
+                  {isRu ? ' /ночь' : ' /night'}
+                </span>
+              )}
             </div>
           </div>
           
-          {/* Сравнение без перехода по ссылке */}
+          {/* Сравнение */}
           <button
             onClick={handleComparisonClick}
-            className={`text-xs underline transition cursor-pointer z-10 ${isCompared ? 'text-teal-600 font-bold' : 'text-slate-400 hover:text-slate-600'}`}
+            className={`text-xs underline transition cursor-pointer z-10 ${
+              isCompared ? 'text-teal-600 font-bold' : 'text-slate-400 hover:text-slate-600'
+            }`}
           >
-            {isCompared ? 'В сравнении' : '+ Сравнить'}
+            {isCompared 
+              ? (isRu ? 'В сравнении' : 'In comparison') 
+              : (isRu ? '+ Сравнить' : '+ Compare')}
           </button>
         </div>
 
-        {/* Главная кнопка-указатель */}
+        {/* Главная кнопка карточки */}
         <div
           className={`w-full py-3.5 px-4 rounded-2xl font-bold text-sm text-center transition-all duration-300 flex items-center justify-center space-x-2 ${
             property.operation === 'daily'
@@ -141,7 +162,11 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
               : 'bg-slate-900 group-hover:bg-teal-600 text-white'
           }`}
         >
-          <span>{property.operation === 'daily' ? 'Забронировать' : 'Запросить детали'}</span>
+          <span>
+            {property.operation === 'daily' 
+              ? (isRu ? 'Забронировать' : 'Book Now') 
+              : (isRu ? 'Запросить детали' : 'Request Details')}
+          </span>
           <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
         </div>
       </div>
