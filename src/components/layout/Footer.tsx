@@ -2,13 +2,17 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation'; // <-- Добавили хук
+import { usePathname } from 'next/navigation';
 import { MapPin, Phone, Mail, Lock } from 'lucide-react';
 
 export const Footer = () => {
   const pathname = usePathname();
 
-  // Скрываем футер в админке
+  // Корректный путь к логотипу для GitHub Pages и локальной разработки
+  const basePath = process.env.NODE_ENV === 'production' ? '/sharmino_real_estate' : '';
+  const logoSrc = `${basePath}/logo.png`;
+
+  // Скрываем футер в панели админки
   if (pathname?.startsWith('/admin')) {
     return null;
   }
@@ -19,7 +23,7 @@ export const Footer = () => {
         
         <div className="space-y-4">
           <Link href="/" className="flex items-center space-x-3 inline-block cursor-pointer">
-            <img src="/logo.png" alt="SHARMINO" className="h-9 w-auto object-contain" />
+            <img src={logoSrc} alt="SHARMINO" className="h-9 w-auto object-contain" />
             <span className="text-xl font-black tracking-widest text-white">
               SHARMINO<span className="text-amber-400">.</span>
             </span>

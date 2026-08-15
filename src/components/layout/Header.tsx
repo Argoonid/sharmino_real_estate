@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation'; // <-- Добавили хук
+import { usePathname } from 'next/navigation';
 import { Heart, Phone, Send, MessageSquare, Menu, X, Sparkles } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { Currency, Language } from '@/types';
@@ -12,7 +12,11 @@ export const Header = () => {
   const { lang, setLang, currency, setCurrency, favorites } = useApp();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Скрываем обычную шапку сайта в админке
+  // Корректный путь к логотипу для GitHub Pages и локальной разработки
+  const basePath = process.env.NODE_ENV === 'production' ? '/sharmino_real_estate' : '';
+  const logoSrc = `${basePath}/logo.png`;
+
+  // Скрываем обычную шапку сайта в панели админки
   if (pathname?.startsWith('/admin')) {
     return null;
   }
@@ -24,7 +28,7 @@ export const Header = () => {
         {/* Логотип */}
         <Link href="/" className="flex items-center space-x-3.5 group cursor-pointer flex-shrink-0 h-full py-2.5">
           <img 
-            src="/logo.png" 
+            src={logoSrc} 
             alt="SHARMINO Logo" 
             className="h-full w-auto object-contain transition-transform duration-300 group-hover:scale-105" 
           />
@@ -85,7 +89,7 @@ export const Header = () => {
           </div>
         </div>
 
-        {/* Утилиты */}
+        {/* Переключатели валюты и языка */}
         <div className="flex items-center space-x-2 sm:space-x-3">
           <div className="hidden sm:flex items-center bg-slate-800/80 p-1 rounded-xl border border-slate-700/60 text-xs font-bold">
             {(['USD', 'EUR', 'EGP'] as Currency[]).map((curr) => (
@@ -138,7 +142,7 @@ export const Header = () => {
         </div>
       </div>
 
-      {/* Мобильное меню */}
+      {/* Мобильное всплывающее меню */}
       {isMobileMenuOpen && (
         <div className="md:hidden bg-slate-950 border-b border-slate-800 px-4 pt-4 pb-6 space-y-5 animate-in slide-in-from-top duration-300">
           <div className="space-y-3">

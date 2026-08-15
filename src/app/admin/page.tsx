@@ -43,6 +43,10 @@ export default function AdminDashboard() {
   const [propertiesList, setPropertiesList] = useState<Property[]>(MOCK_PROPERTIES);
   const [searchTerm, setSearchTerm] = useState('');
 
+  // Корректный путь к логотипу для GitHub Pages и локальной разработки
+  const basePath = process.env.NODE_ENV === 'production' ? '/sharmino_real_estate' : '';
+  const logoSrc = `${basePath}/logo.png`;
+
   // 1. Ручная шахматка дат (11 дней)
   const [gridData, setGridData] = useState<Record<string, ('free' | 'booked' | 'blocked')[]>>({
     'prop-1': ['free', 'free', 'booked', 'booked', 'booked', 'free', 'free', 'free', 'free', 'free', 'free'],
@@ -160,7 +164,7 @@ export default function AdminDashboard() {
       <div className="lg:hidden sticky top-0 z-40 bg-slate-900 border-b border-slate-800 px-4 py-3 flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <img 
-            src="/logo.png" 
+            src={logoSrc} 
             alt="SHARMINO Logo" 
             className="h-8 w-auto object-contain" 
           />
@@ -229,7 +233,7 @@ export default function AdminDashboard() {
         <div className="space-y-8">
           <div className="flex items-center space-x-3">
             <img 
-              src="/logo.png" 
+              src={logoSrc} 
               alt="SHARMINO Logo" 
               className="h-10 w-auto object-contain" 
             />
@@ -763,7 +767,7 @@ export default function AdminDashboard() {
             <div className="space-y-3">
               <div>
                 <label className="font-bold text-slate-400 block mb-1">ФИО Клиента</label>
-                <input type="text" value={editingLead.name} onChange={e => setEditingLead({ ...editingLead, name: e.target.value })} className="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-white outline-none" />
+                <input type="text" value={editingLead.name} onChange={e => setEditingLead({ ...editingLead, name: e.target.value })} className="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-white outline-none focus:border-teal-500" />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
