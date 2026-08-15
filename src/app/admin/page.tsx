@@ -158,9 +158,9 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col lg:flex-row">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col lg:flex-row w-full">
       
-      {/* 1. Верхний бар для мобилок с логотипом */}
+      {/* 1. Верхний бар для мобилок */}
       <div className="lg:hidden sticky top-0 z-40 bg-slate-900 border-b border-slate-800 px-4 py-3 flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <img 
@@ -228,18 +228,18 @@ export default function AdminDashboard() {
         </button>
       </div>
 
-      {/* 3. Десктопный сайдбар с логотипом */}
-      <aside className="hidden lg:flex w-64 bg-slate-900 border-r border-slate-800 p-6 flex-col justify-between flex-shrink-0 min-h-screen">
+      {/* 3. Десктопный сайдбар (увеличен до w-72, чтобы ничего не наезжало) */}
+      <aside className="hidden lg:flex w-72 bg-slate-900 border-r border-slate-800/80 p-6 flex-col justify-between flex-shrink-0 min-h-screen">
         <div className="space-y-8">
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-3.5">
             <img 
               src={logoSrc} 
               alt="SHARMINO Logo" 
-              className="h-10 w-auto object-contain" 
+              className="h-9 w-auto object-contain flex-shrink-0" 
             />
-            <div>
-              <span className="text-[9px] text-amber-400 font-bold uppercase tracking-widest block">Панель управления</span>
-              <h2 className="text-xl font-black text-white tracking-wider leading-none">
+            <div className="min-w-0">
+              <span className="text-[9px] text-amber-400 font-bold uppercase tracking-widest block leading-tight">Панель управления</span>
+              <h2 className="text-xl font-black text-white tracking-wider leading-tight truncate">
                 SHARMINO<span className="text-teal-400">.CRM</span>
               </h2>
             </div>
@@ -252,7 +252,7 @@ export default function AdminDashboard() {
                 activeTab === 'properties' ? 'bg-teal-600 text-white shadow-lg shadow-teal-600/30' : 'text-slate-400 hover:bg-slate-800 hover:text-white'
               }`}
             >
-              <Building className="w-4 h-4" />
+              <Building className="w-4 h-4 flex-shrink-0" />
               <span>База объектов ({propertiesList.length})</span>
             </button>
 
@@ -262,7 +262,7 @@ export default function AdminDashboard() {
                 activeTab === 'bookings' ? 'bg-teal-600 text-white shadow-lg shadow-teal-600/30' : 'text-slate-400 hover:bg-slate-800 hover:text-white'
               }`}
             >
-              <CalendarIcon className="w-4 h-4" />
+              <CalendarIcon className="w-4 h-4 flex-shrink-0" />
               <span>Шахматка / Календарь</span>
             </button>
 
@@ -272,7 +272,7 @@ export default function AdminDashboard() {
                 activeTab === 'leads' ? 'bg-teal-600 text-white shadow-lg shadow-teal-600/30' : 'text-slate-400 hover:bg-slate-800 hover:text-white'
               }`}
             >
-              <Users className="w-4 h-4" />
+              <Users className="w-4 h-4 flex-shrink-0" />
               <span>CRM Канбан ({leads.length})</span>
             </button>
 
@@ -282,7 +282,7 @@ export default function AdminDashboard() {
                 activeTab === 'pricing' ? 'bg-teal-600 text-white shadow-lg shadow-teal-600/30' : 'text-slate-400 hover:bg-slate-800 hover:text-white'
               }`}
             >
-              <TrendingUp className="w-4 h-4" />
+              <TrendingUp className="w-4 h-4 flex-shrink-0" />
               <span>Сезоны & Цены {seasonMultiplier > 1 && <span className="ml-1 px-1.5 py-0.5 bg-amber-400 text-slate-950 font-black rounded text-[9px]">+{Math.round((seasonMultiplier - 1) * 100)}%</span>}</span>
             </button>
           </nav>
@@ -297,29 +297,29 @@ export default function AdminDashboard() {
             <span>Вернуться на сайт</span>
           </Link>
           <div className="text-[10px] text-slate-500 font-mono text-center">
-            SHARMINO v4.2 Mobile CRM
+            SHARMINO v4.5 Pro CRM
           </div>
         </div>
       </aside>
 
-      {/* 4. Основной рабочий блок */}
-      <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto space-y-6">
+      {/* 4. Основной рабочий блок с изолированным min-w-0 */}
+      <main className="flex-1 min-w-0 p-5 sm:p-7 lg:p-9 overflow-y-auto space-y-6">
         
         {/* ВКЛАДКА 1: ОБЪЕКТЫ */}
         {activeTab === 'properties' && (
           <div className="space-y-6 animate-in fade-in duration-300">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-slate-800">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-5 border-b border-slate-800/80">
               <div>
-                <h1 className="text-xl sm:text-3xl font-black text-white">База недвижимости</h1>
-                <p className="text-xs text-slate-400 mt-0.5">Управление объектами и ценами</p>
+                <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">База недвижимости</h1>
+                <p className="text-xs text-slate-400 mt-1">Управление объектами, ценами и статусами</p>
               </div>
 
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full sm:w-auto">
-                <div className="relative flex-1 sm:w-64">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+                <div className="relative flex-1 sm:w-72">
                   <Search className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
                   <input
                     type="text"
-                    placeholder="Поиск..."
+                    placeholder="Поиск объекта..."
                     value={searchTerm}
                     onChange={e => setSearchTerm(e.target.value)}
                     className="w-full bg-slate-900 border border-slate-800 pl-9 pr-4 py-2.5 rounded-xl text-xs text-white placeholder-slate-500 outline-none focus:border-teal-500"
@@ -328,7 +328,7 @@ export default function AdminDashboard() {
 
                 <button
                   onClick={handleOpenAddModal}
-                  className="cursor-pointer flex items-center justify-center space-x-2 bg-gradient-to-r from-teal-500 to-emerald-600 text-white px-4 py-2.5 rounded-xl font-bold text-xs shadow-lg shadow-teal-500/20 active:scale-95"
+                  className="cursor-pointer flex items-center justify-center space-x-2 bg-gradient-to-r from-teal-500 to-emerald-600 text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-lg shadow-teal-500/20 active:scale-95"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Добавить объект</span>
@@ -439,8 +439,8 @@ export default function AdminDashboard() {
         {activeTab === 'bookings' && (
           <div className="space-y-6 animate-in fade-in duration-300">
             <div>
-              <h1 className="text-xl sm:text-3xl font-black text-white">Шахматка Бронирований</h1>
-              <p className="text-xs text-slate-400 mt-1">Свайпайте вправо/влево и кликайте для смены статуса дат</p>
+              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">Шахматка Бронирований</h1>
+              <p className="text-xs text-slate-400 mt-1">Кликайте по ячейкам для смены статуса (Свободно / Занято / Блок)</p>
             </div>
 
             <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 overflow-x-auto shadow-xl">
@@ -489,7 +489,7 @@ export default function AdminDashboard() {
           <div className="space-y-6 animate-in fade-in duration-300">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div>
-                <h1 className="text-xl sm:text-3xl font-black text-white">CRM Заявки & Клиенты</h1>
+                <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">CRM Заявки & Клиенты</h1>
                 <p className="text-xs text-slate-400 mt-0.5">Лиды и ваучеры бронирования</p>
               </div>
 
@@ -599,8 +599,8 @@ export default function AdminDashboard() {
         {activeTab === 'pricing' && (
           <div className="space-y-6 animate-in fade-in duration-300">
             <div>
-              <h1 className="text-xl sm:text-3xl font-black text-white">Контроллер сезонов</h1>
-              <p className="text-xs text-slate-400 mt-1">Цены на всем сайте пересчитываются мгновенно</p>
+              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">Контроллер сезонов</h1>
+              <p className="text-xs text-slate-400 mt-1">Цены на всем сайте пересчитываются мгновенно в реальном времени</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -767,7 +767,7 @@ export default function AdminDashboard() {
             <div className="space-y-3">
               <div>
                 <label className="font-bold text-slate-400 block mb-1">ФИО Клиента</label>
-                <input type="text" value={editingLead.name} onChange={e => setEditingLead({ ...editingLead, name: e.target.value })} className="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-white outline-none focus:border-teal-500" />
+                <input type="text" value={editingLead.name} onChange={e => setEditingLead({ ...editingLead, name: e.target.value })} className="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-white outline-none" />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
