@@ -10,6 +10,7 @@ import { Currency, Language } from '@/types';
 export const Header = () => {
   const pathname = usePathname();
   const { lang, setLang, currency, setCurrency, favorites } = useApp();
+  const isRu = lang === 'ru';
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Корректный путь к логотипу для GitHub Pages и локальной разработки
@@ -49,11 +50,11 @@ export const Header = () => {
             className="cursor-pointer flex items-center space-x-2 bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white px-5 py-2.5 rounded-xl font-black shadow-lg shadow-teal-500/20 transform transition-all duration-300 hover:scale-105 active:scale-95"
           >
             <Sparkles className="w-4 h-4 text-amber-300" />
-            <span>Каталог объектов</span>
+            <span>{isRu ? 'Каталог объектов' : 'Explore Catalog'}</span>
           </Link>
 
           <Link href="/about" className="text-slate-300 hover:text-teal-400 transition-colors cursor-pointer px-2 py-1">
-            О нас
+            {isRu ? 'О нас' : 'About Us'}
           </Link>
         </nav>
 
@@ -72,7 +73,7 @@ export const Header = () => {
               href="https://wa.me/201000000000"
               target="_blank"
               rel="noreferrer"
-              title="Написать в WhatsApp"
+              title="WhatsApp"
               className="p-2 bg-emerald-500/20 hover:bg-emerald-500 text-emerald-400 hover:text-white rounded-xl transition-all duration-300 cursor-pointer"
             >
               <MessageSquare className="w-4 h-4" />
@@ -81,7 +82,7 @@ export const Header = () => {
               href="https://t.me/sharmino_official"
               target="_blank"
               rel="noreferrer"
-              title="Написать в Telegram"
+              title="Telegram"
               className="p-2 bg-sky-500/20 hover:bg-sky-500 text-sky-400 hover:text-white rounded-xl transition-all duration-300 cursor-pointer"
             >
               <Send className="w-4 h-4" />
@@ -122,7 +123,7 @@ export const Header = () => {
           <Link
             href="/favorites"
             className="relative p-2.5 bg-slate-800 hover:bg-slate-700 rounded-xl border border-slate-700/60 text-slate-300 transition-all duration-200 cursor-pointer"
-            title="Избранные объекты"
+            title={isRu ? 'Избранные объекты' : 'Favorite Properties'}
           >
             <Heart className="w-5 h-5" />
             {favorites.length > 0 && (
@@ -135,32 +136,32 @@ export const Header = () => {
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="md:hidden p-2.5 bg-slate-800 hover:bg-slate-700 text-white rounded-xl border border-slate-700/60 transition cursor-pointer"
-            aria-label="Открыть меню"
+            aria-label="Toggle menu"
           >
             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
       </div>
 
-      {/* Мобильное всплывающее меню */}
+      {/* Мобильное меню */}
       {isMobileMenuOpen && (
         <div className="md:hidden bg-slate-950 border-b border-slate-800 px-4 pt-4 pb-6 space-y-5 animate-in slide-in-from-top duration-300">
           <div className="space-y-3">
             <Link
               href="/catalog"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="flex items-center justify-center space-x-2 bg-gradient-to-r from-teal-500 to-emerald-600 text-white text-center py-3.5 rounded-2xl font-black text-sm shadow-lg shadow-teal-500/20"
+              className="flex items-center justify-center space-x-2 bg-gradient-to-r from-teal-500 to-emerald-600 text-white text-center py-3.5 rounded-2xl font-black text-sm shadow-lg shadow-teal-500/20 cursor-pointer"
             >
               <Sparkles className="w-4 h-4 text-amber-300" />
-              <span>Перейти в Каталог</span>
+              <span>{isRu ? 'Перейти в Каталог' : 'Explore Catalog'}</span>
             </Link>
 
             <Link
               href="/about"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="block text-center py-3 rounded-2xl bg-slate-900 text-slate-200 font-bold text-sm border border-slate-800"
+              className="block text-center py-3 rounded-2xl bg-slate-900 text-slate-200 font-bold text-sm border border-slate-800 cursor-pointer"
             >
-              О нас
+              {isRu ? 'О нас' : 'About Us'}
             </Link>
           </div>
 
@@ -170,7 +171,7 @@ export const Header = () => {
                 <button
                   key={curr}
                   onClick={() => setCurrency(curr)}
-                  className={`flex-1 py-1.5 rounded-lg text-center transition ${
+                  className={`flex-1 py-1.5 rounded-lg text-center transition cursor-pointer ${
                     currency === curr ? 'bg-teal-600 text-white' : 'text-slate-400'
                   }`}
                 >
@@ -184,7 +185,7 @@ export const Header = () => {
                 <button
                   key={l}
                   onClick={() => setLang(l)}
-                  className={`flex-1 py-1.5 rounded-lg uppercase text-center transition ${
+                  className={`flex-1 py-1.5 rounded-lg uppercase text-center transition cursor-pointer ${
                     lang === l ? 'bg-amber-500 text-slate-950' : 'text-slate-400'
                   }`}
                 >

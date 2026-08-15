@@ -8,6 +8,7 @@ import { PropertyCard } from '@/components/catalog/PropertyCard';
 import { CustomSelect } from '@/components/ui/CustomSelect';
 import { Filter, Map as MapIcon, Grid, Loader2 } from 'lucide-react';
 import { OperationType, PropertyType } from '@/types';
+import { useApp } from '@/context/AppContext';
 
 const PropertyMap = dynamic(() => import('@/components/map/PropertyMap'), {
   ssr: false,
@@ -19,6 +20,9 @@ const PropertyMap = dynamic(() => import('@/components/map/PropertyMap'), {
 });
 
 function CatalogContent() {
+  const { lang } = useApp();
+  const isRu = lang === 'ru';
+
   const searchParams = useSearchParams();
   const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid');
 
@@ -45,9 +49,10 @@ function CatalogContent() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 min-h-screen">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 pb-6">
         <div>
-          <h1 className="text-3xl font-black text-slate-900">Каталог недвижимости</h1>
+          <h1 className="text-3xl font-black text-slate-900">{isRu ? 'Каталог недвижимости' : 'Property Catalog'}</h1>
           <p className="text-sm text-slate-500 mt-1">
-            Найдено вариантов: <span className="font-bold text-teal-600">{filteredProperties.length}</span>
+            {isRu ? 'Найдено вариантов: ' : 'Properties found: '}
+            <span className="font-bold text-teal-600">{filteredProperties.length}</span>
           </p>
         </div>
 
@@ -59,7 +64,7 @@ function CatalogContent() {
             }`}
           >
             <Grid className="w-4 h-4" />
-            <span>Сеткой</span>
+            <span>{isRu ? 'Сеткой' : 'Grid'}</span>
           </button>
           <button
             onClick={() => setViewMode('map')}
@@ -68,54 +73,57 @@ function CatalogContent() {
             }`}
           >
             <MapIcon className="w-4 h-4" />
-            <span>На карте</span>
+            <span>{isRu ? 'На карте' : 'Map'}</span>
           </button>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        <aside className="lg:col-span-1 space-y-6">
-          <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-5 sticky top-28">
+        {/* Фильтры с повышенным z-index для корректного перекрытия списков */}
+        <aside className="lg:col-span-1 space-y-6 relative z-30">
+          <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-5 sticky top-24 lg:top-28 z-30">
             <div className="flex items-center space-x-2 text-slate-900 font-bold mb-2">
               <Filter className="w-5 h-5 text-teal-500" />
-              <h2>Фильтры</h2>
+              <h2>{isRu ? 'Фильтры' : 'Filters'}</h2>
             </div>
 
-            {/* Стильные кастомные дропдауны */}
+            {/* Дропдаун сделки */}
             <CustomSelect
-              label="Сделка"
+              label={isRu ? 'Сделка' : 'Deal Type'}
               value={operation}
               onChange={(val) => setOperation(val as any)}
               options={[
-                { value: 'all', label: 'Все варианты' },
-                { value: 'daily', label: 'Посуточно' },
-                { value: 'long_term', label: 'Долгосрок' },
-                { value: 'sale', label: 'Продажа' },
+                { value: 'all', label: isRu ? 'Все варианты' : 'All Deals' },
+                { value: 'daily', label: isRu ? 'Посуточно' : 'Short-term' },
+                { value: 'long_term', label: isRu ? 'Долгосрок' : 'Long-term' },
+                { value: 'sale', label: isRu ? 'Продажа' : 'For Sale' },
               ]}
             />
 
+            {/* Дропдаун типа */}
             <CustomSelect
-              label="Тип"
+              label={isRu ? 'Тип' : 'Property Type'}
               value={type}
               onChange={(val) => setType(val as any)}
               options={[
-                { value: 'all', label: 'Все типы' },
-                { value: 'villa', label: 'Вилла' },
-                { value: 'apartment', label: 'Апартаменты' },
-                { value: 'penthouse', label: 'Пентхаус' },
+                { value: 'all', label: isRu ? 'Все типы' : 'All Types' },
+                { value: 'villa', label: isRu ? 'Вилла' : 'Villa' },
+                { value: 'apartment', label: isRu ? 'Апартаменты' : 'Apartment' },
+                { value: 'penthouse', label: isRu ? 'Пентхаус' : 'Penthouse' },
               ]}
             />
 
+            {/* Дропдаун района */}
             <CustomSelect
-              label="Район"
+              label={isRu ? 'Район' : 'District'}
               value={district}
               onChange={(val) => setDistrict(val)}
               options={[
-                { value: 'all', label: 'Все районы' },
-                { value: 'sahl_hasheesh', label: 'Сахль Хашиш' },
-                { value: 'naama_bay', label: 'Наама Бей' },
-                { value: 'sharks_bay', label: 'Шаркс Бей' },
-                { value: 'hadaba', label: 'Хадаба' },
+                { value: 'all', label: isRu ? 'Все районы' : 'All Districts' },
+                { value: 'sahl_hasheesh', label: isRu ? 'Сахль Хашиш' : 'Sahl Hasheesh' },
+                { value: 'naama_bay', label: isRu ? 'Наама Бей' : 'Naama Bay' },
+                { value: 'sharks_bay', label: isRu ? 'Шаркс Бей' : 'Sharks Bay' },
+                { value: 'hadaba', label: isRu ? 'Хадаба' : 'Hadaba' },
               ]}
             />
 
@@ -127,12 +135,13 @@ function CatalogContent() {
               }}
               className="cursor-pointer w-full py-3 text-xs font-bold text-slate-500 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 rounded-xl transition mt-2"
             >
-              Сбросить фильтры
+              {isRu ? 'Сбросить фильтры' : 'Reset Filters'}
             </button>
           </div>
         </aside>
 
-        <div className="lg:col-span-3">
+        {/* Сетка карточек с базовым z-index */}
+        <div className="lg:col-span-3 relative z-10">
           {viewMode === 'grid' ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {filteredProperties.length > 0 ? (
@@ -141,7 +150,7 @@ function CatalogContent() {
                 ))
               ) : (
                 <div className="col-span-full py-20 text-center text-slate-500">
-                  <p className="text-lg font-bold">Объекты не найдены</p>
+                  <p className="text-lg font-bold">{isRu ? 'Объекты не найдены' : 'No properties found'}</p>
                 </div>
               )}
             </div>
@@ -156,7 +165,7 @@ function CatalogContent() {
 
 export default function CatalogPage() {
   return (
-    <Suspense fallback={<div className="p-10 text-center">Загрузка каталога...</div>}>
+    <Suspense fallback={<div className="p-10 text-center text-slate-500">Loading catalog...</div>}>
       <CatalogContent />
     </Suspense>
   );
