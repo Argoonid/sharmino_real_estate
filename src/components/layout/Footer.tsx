@@ -11,8 +11,9 @@ export const Footer = () => {
   const { lang } = useApp();
   const isRu = lang === 'ru';
 
-  // Корректный путь к логотипу для GitHub Pages и локальной разработки
-  const basePath = process.env.NODE_ENV === 'production' ? '/sharmino_real_estate' : '';
+  // Автоматический путь к логотипу: на GitHub Pages добавляет подпапку, на Vercel и localhost использует корень
+  const isGitHubPages = typeof window !== 'undefined' && window.location.pathname.startsWith('/sharmino_real_estate');
+  const basePath = isGitHubPages || process.env.GITHUB_ACTIONS ? '/sharmino_real_estate' : '';
   const logoSrc = `${basePath}/logo.png`;
 
   // Скрываем футер в панели админки
@@ -59,7 +60,7 @@ export const Footer = () => {
           </h4>
           <ul className="space-y-2 text-xs">
             <li className="flex items-center space-x-2"><MapPin className="w-3.5 h-3.5 text-teal-500" /><span>{isRu ? 'Сахль Хашиш' : 'Sahl Hasheesh'}</span></li>
-            <li className="flex items-center space-x-2"><MapPin className="w-3.5 h-3.5 text-teal-500" /><span>{isRu ? 'Наама Бей' : 'Naama Bay'}</span></li>
+            <li className="flex items-center space-x-2"><MapPin className="w-3.5 h-3.5 text-teal-500" /><span>Наама Бей</span></li>
             <li className="flex items-center space-x-2"><MapPin className="w-3.5 h-3.5 text-teal-500" /><span>{isRu ? 'Шаркс Бей' : 'Sharks Bay'}</span></li>
             <li className="flex items-center space-x-2"><MapPin className="w-3.5 h-3.5 text-teal-500" /><span>{isRu ? 'Хадаба & Старый Город' : 'Hadaba & Old Town'}</span></li>
           </ul>

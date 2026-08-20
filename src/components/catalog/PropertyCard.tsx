@@ -1,8 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { Heart, Bed, Bath, Maximize, MapPin, Sparkles, ArrowRight } from 'lucide-react';
+import { Heart, Bed, Bath, Maximize, MapPin, Sparkles, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Property } from '@/types';
 import { useApp } from '@/context/AppContext';
 
@@ -25,6 +25,24 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
   const isFav = favorites.includes(property.id);
   const isCompared = comparisonList.includes(property.id);
 
+  // Стейт текущего слайда для листания фото в карточке
+  const [currentImgIndex, setCurrentImgIndex] = useState(0);
+  const images = property.images && property.images.length > 0 
+    ? property.images 
+    : ['/images/placeholder.jpg'];
+
+  const handlePrevImg = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentImgIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+  };
+
+  const handleNextImg = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentImgIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  };
+
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -37,7 +55,6 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
     toggleComparison(property.id);
   };
 
-  // Локализация типа сделки
   const getOperationLabel = () => {
     if (property.operation === 'daily') return isRu ? 'Посуточно' : 'Short-term';
     if (property.operation === 'sale') return isRu ? 'Продажа' : 'For Sale';
@@ -49,19 +66,50 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
   return (
     <Link
       href={`/property/${property.id}`}
-      className="group bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-md hover:shadow-2xl transition-all duration-300 flex flex-col justify-between cursor-pointer transform hover:-translate-y-1 block"
+      className="group bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-md hover:shadow-2xl transition-all duration-300 flex flex-col justify-between cursor-pointer transform hover:-translate-y-1 block select-none"
     >
       <div>
-        {/* Превью и бэйджи */}
-        <div className="relative h-64 w-full overflow-hidden">
+        {/* Интерактивная галерея с переключением */}
+        <div className="relative h-64 w-full overflow-hidden bg-slate-100">
           <img
-            src={property.images[0]}
-            alt={property.title[lang]}
-            className="w-full h-full object-cover group-hover:scale-105 transition duration-700"
+            src={images[currentImgIndex]}
+            alt={property.title[lang] || 'Property'}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            loading="lazy"
+            onError={(e) => {
+              // Защита от битых картинок
+              (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80';
+            }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-black/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-black/20 pointer-events-none" />
 
-          <div className="absolute top-4 left-4 flex flex-wrap gap-2">
+          {/* Стрелки переключения фото (если картинок больше 1) */}
+          {images.length > 1 && (
+            <>
+              <button
+                onClick={handlePrevImg}
+                className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-slate-900/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-slate-900 transition-all duration-200 backdrop-blur-sm z-20 cursor-pointer"
+                title="Предыдущее фото"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                onClick={handleNextImg}
+                className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-slate-900/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-slate-900 transition-all duration-200 backdrop-blur-sm z-20 cursor-pointer"
+                title="Следующее фото"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+
+              {/* Счетчик фото */}
+              <div className="absolute bottom-4 right-4 text-[10px] font-bold text-white/90 bg-slate-900/60 backdrop-blur-md px-2 py-0.5 rounded-full z-10">
+                {currentImgIndex + 1} / {images.length}
+              </div>
+            </>
+          )}
+
+          {/* Бейджи */}
+          <div className="absolute top-4 left-4 flex flex-wrap gap-2 z-10 pointer-events-none">
             <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-white backdrop-blur-md shadow-md ${
               property.operation === 'daily' 
                 ? 'bg-teal-600/90' 
@@ -79,31 +127,31 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
             )}
           </div>
 
-          {/* Иконка Избранного */}
+          {/* Избранное */}
           <button
             onClick={handleFavoriteClick}
-            className={`absolute top-4 right-4 p-2.5 rounded-full backdrop-blur-md transition cursor-pointer z-10 ${
+            className={`absolute top-4 right-4 p-2.5 rounded-full backdrop-blur-md transition cursor-pointer z-20 ${
               isFav ? 'bg-rose-500 text-white' : 'bg-slate-900/40 text-white hover:bg-rose-500'
             }`}
-            title={isRu ? 'Добавить в избранное' : 'Add to favorites'}
+            title={isRu ? 'В избранное' : 'To favorites'}
           >
             <Heart className="w-4 h-4 fill-current" />
           </button>
 
           {/* Район */}
-          <div className="absolute bottom-4 left-4 flex items-center space-x-1 text-white/90 text-xs font-medium bg-slate-900/60 backdrop-blur-md px-3 py-1 rounded-lg">
+          <div className="absolute bottom-4 left-4 flex items-center space-x-1 text-white/90 text-xs font-medium bg-slate-900/60 backdrop-blur-md px-3 py-1 rounded-lg z-10 pointer-events-none">
             <MapPin className="w-3.5 h-3.5 text-teal-400" />
             <span>{districtLabel}</span>
           </div>
         </div>
 
-        {/* Информационный блок */}
+        {/* Описание */}
         <div className="p-6">
           <h3 className="text-xl font-bold text-slate-900 group-hover:text-teal-600 transition line-clamp-1 mb-2">
             {property.title[lang]}
           </h3>
 
-          <p className="text-slate-500 text-sm mb-4 line-clamp-2">
+          <p className="text-slate-500 text-sm mb-4 line-clamp-2 leading-relaxed">
             {property.description[lang]}
           </p>
 
@@ -124,7 +172,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
         </div>
       </div>
 
-      {/* Стоимость и кнопка действия */}
+      {/* Цена и кнопка */}
       <div className="px-6 pb-6 pt-0">
         <div className="flex items-end justify-between mb-4">
           <div>
@@ -141,7 +189,6 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
             </div>
           </div>
           
-          {/* Сравнение */}
           <button
             onClick={handleComparisonClick}
             className={`text-xs underline transition cursor-pointer z-10 ${
@@ -154,7 +201,6 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
           </button>
         </div>
 
-        {/* Главная кнопка карточки */}
         <div
           className={`w-full py-3.5 px-4 rounded-2xl font-bold text-sm text-center transition-all duration-300 flex items-center justify-center space-x-2 ${
             property.operation === 'daily'

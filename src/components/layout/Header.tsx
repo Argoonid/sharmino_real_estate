@@ -13,8 +13,9 @@ export const Header = () => {
   const isRu = lang === 'ru';
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Корректный путь к логотипу для GitHub Pages и локальной разработки
-  const basePath = process.env.NODE_ENV === 'production' ? '/sharmino_real_estate' : '';
+  // Автоматический путь к логотипу: на GitHub Pages добавляет подпапку, на Vercel и localhost использует корень
+  const isGitHubPages = typeof window !== 'undefined' && window.location.pathname.startsWith('/sharmino_real_estate');
+  const basePath = isGitHubPages || process.env.GITHUB_ACTIONS ? '/sharmino_real_estate' : '';
   const logoSrc = `${basePath}/logo.png`;
 
   // Скрываем обычную шапку сайта в панели админки

@@ -1,22 +1,14 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
 
-const isProd = process.env.NODE_ENV === 'production';
+const isGithubActions = process.env.GITHUB_ACTIONS || false;
 
 const nextConfig: NextConfig = {
-  // 1. Включаем статический экспорт (HTML/CSS/JS)
-  output: 'export',
-
-  // 2. Отключаем серверную оптимизацию изображений для статики
+  // Если сборка на GitHub Actions — используем подпапку, на Vercel — корень сайта
+  basePath: isGithubActions ? '/sharmino_real_estate' : '',
+  assetPrefix: isGithubActions ? '/sharmino_real_estate/' : '',
   images: {
     unoptimized: true,
   },
-
-  // 3. Указываем путь репозитория для корректных путей к скриптам и картинкам
-  basePath: isProd ? '/sharmino_real_estate' : '',
-  assetPrefix: isProd ? '/sharmino_real_estate/' : '',
-  
-  // Добавляем слеш в конце URL для стабильной маршрутизации на GitHub Pages
-  trailingSlash: true,
 };
 
 export default nextConfig;
