@@ -1,22 +1,25 @@
-import React from 'react';
 import { MOCK_PROPERTIES } from '@/lib/mock-data';
 import { PropertyClient } from './PropertyClient';
+import { notFound } from 'next/navigation';
 
-// Обязательно для сборки статики на GitHub Pages:
-export async function generateStaticParams() {
-  return MOCK_PROPERTIES.map((p) => ({
-    id: p.id,
+// Обязательная функция для статического билда
+export function generateStaticParams() {
+  return MOCK_PROPERTIES.map((property) => ({
+    id: property.id,
   }));
 }
 
-export default async function PropertyDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+interface PropertyPageProps {
+  params: Promise<{ id: string }> | { id: string };
+}
+
+export default async function PropertyPage({ params }: PropertyPageProps) {
   const resolvedParams = await params;
-  const property =
-    MOCK_PROPERTIES.find((p) => p.id === resolvedParams.id) || MOCK_PROPERTIES[0];
+  const property = MOCK_PROPERTIES.find((p) => p.id === resolvedParams.id);
+
+  if (!property) {
+    notFound();
+  }
 
   return <PropertyClient property={property} />;
 }
